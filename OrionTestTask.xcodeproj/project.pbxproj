@@ -10,10 +10,8 @@
 		3CD18CEE28FD02B600C57DA2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18CED28FD02B600C57DA2 /* AppDelegate.swift */; };
 		3CD18CF028FD02B600C57DA2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18CEF28FD02B600C57DA2 /* SceneDelegate.swift */; };
 		3CD18CF228FD02B600C57DA2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18CF128FD02B600C57DA2 /* ViewController.swift */; };
-		3CD18CF528FD02B600C57DA2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CD18CF328FD02B600C57DA2 /* Main.storyboard */; };
 		3CD18CF828FD02B600C57DA2 /* OrionTestTask.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18CF628FD02B600C57DA2 /* OrionTestTask.xcdatamodeld */; };
 		3CD18CFA28FD02B600C57DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CD18CF928FD02B600C57DA2 /* Assets.xcassets */; };
-		3CD18CFD28FD02B600C57DA2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3CD18CFB28FD02B600C57DA2 /* LaunchScreen.storyboard */; };
 		3CD18D0828FD02B600C57DA2 /* OrionTestTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18D0728FD02B600C57DA2 /* OrionTestTaskTests.swift */; };
 		3CD18D1228FD02B700C57DA2 /* OrionTestTaskUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18D1128FD02B700C57DA2 /* OrionTestTaskUITests.swift */; };
 		3CD18D1428FD02B700C57DA2 /* OrionTestTaskUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18D1328FD02B700C57DA2 /* OrionTestTaskUITestsLaunchTests.swift */; };
@@ -41,10 +39,8 @@
 		3CD18CED28FD02B600C57DA2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3CD18CEF28FD02B600C57DA2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		3CD18CF128FD02B600C57DA2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		3CD18CF428FD02B600C57DA2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3CD18CF728FD02B600C57DA2 /* OrionTestTask.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OrionTestTask.xcdatamodel; sourceTree = "<group>"; };
 		3CD18CF928FD02B600C57DA2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		3CD18CFC28FD02B600C57DA2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3CD18CFE28FD02B600C57DA2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3CD18D0328FD02B600C57DA2 /* OrionTestTaskTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OrionTestTaskTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CD18D0728FD02B600C57DA2 /* OrionTestTaskTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrionTestTaskTests.swift; sourceTree = "<group>"; };
@@ -104,9 +100,7 @@
 				3CD18CED28FD02B600C57DA2 /* AppDelegate.swift */,
 				3CD18CEF28FD02B600C57DA2 /* SceneDelegate.swift */,
 				3CD18CF128FD02B600C57DA2 /* ViewController.swift */,
-				3CD18CF328FD02B600C57DA2 /* Main.storyboard */,
 				3CD18CF928FD02B600C57DA2 /* Assets.xcassets */,
-				3CD18CFB28FD02B600C57DA2 /* LaunchScreen.storyboard */,
 				3CD18CFE28FD02B600C57DA2 /* Info.plist */,
 				3CD18CF628FD02B600C57DA2 /* OrionTestTask.xcdatamodeld */,
 			);
@@ -140,6 +134,7 @@
 				3CD18CE628FD02B600C57DA2 /* Sources */,
 				3CD18CE728FD02B600C57DA2 /* Frameworks */,
 				3CD18CE828FD02B600C57DA2 /* Resources */,
+				3CD18D2028FD02C300C57DA2 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -234,9 +229,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CD18CFD28FD02B600C57DA2 /* LaunchScreen.storyboard in Resources */,
 				3CD18CFA28FD02B600C57DA2 /* Assets.xcassets in Resources */,
-				3CD18CF528FD02B600C57DA2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +248,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		3CD18D2028FD02C300C57DA2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3CD18CE628FD02B600C57DA2 /* Sources */ = {
@@ -299,25 +312,6 @@
 			targetProxy = 3CD18D0E28FD02B700C57DA2 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		3CD18CF328FD02B600C57DA2 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3CD18CF428FD02B600C57DA2 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		3CD18CFB28FD02B600C57DA2 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3CD18CFC28FD02B600C57DA2 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3CD18D1528FD02B700C57DA2 /* Debug */ = {
@@ -446,7 +440,6 @@
 				INFOPLIST_FILE = OrionTestTask/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -474,7 +467,6 @@
 				INFOPLIST_FILE = OrionTestTask/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

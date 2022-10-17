@@ -8,6 +8,7 @@
 import UIKit
 import CoreData
 
+// swiftlint:disable all
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
