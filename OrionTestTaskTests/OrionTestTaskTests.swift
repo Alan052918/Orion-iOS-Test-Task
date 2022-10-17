@@ -8,6 +8,7 @@
 import XCTest
 @testable import OrionTestTask
 
+// swiftlint:disable all
 final class OrionTestTaskTests: XCTestCase {
 
     override func setUpWithError() throws {

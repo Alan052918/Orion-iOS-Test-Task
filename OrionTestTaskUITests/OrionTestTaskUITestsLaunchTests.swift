@@ -7,6 +7,7 @@
 
 import XCTest
 
+// swiftlint:disable all
 final class OrionTestTaskUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {

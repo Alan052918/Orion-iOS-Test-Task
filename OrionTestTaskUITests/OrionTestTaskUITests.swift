@@ -7,6 +7,7 @@
 
 import XCTest
 
+// swiftlint:disable all
 final class OrionTestTaskUITests: XCTestCase {
 
     override func setUpWithError() throws {

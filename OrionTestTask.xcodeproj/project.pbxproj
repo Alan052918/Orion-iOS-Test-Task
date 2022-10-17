@@ -15,6 +15,8 @@
 		3CD18D0828FD02B600C57DA2 /* OrionTestTaskTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18D0728FD02B600C57DA2 /* OrionTestTaskTests.swift */; };
 		3CD18D1228FD02B700C57DA2 /* OrionTestTaskUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18D1128FD02B700C57DA2 /* OrionTestTaskUITests.swift */; };
 		3CD18D1428FD02B700C57DA2 /* OrionTestTaskUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18D1328FD02B700C57DA2 /* OrionTestTaskUITestsLaunchTests.swift */; };
+		3CD18D2328FD0D2C00C57DA2 /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = 3CD18D2228FD0D2C00C57DA2 /* Logging */; };
+		3CD18D2528FD10D300C57DA2 /* BottomToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CD18D2428FD10D300C57DA2 /* BottomToolbar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,7 @@
 		3CD18D0D28FD02B700C57DA2 /* OrionTestTaskUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OrionTestTaskUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CD18D1128FD02B700C57DA2 /* OrionTestTaskUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrionTestTaskUITests.swift; sourceTree = "<group>"; };
 		3CD18D1328FD02B700C57DA2 /* OrionTestTaskUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrionTestTaskUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3CD18D2428FD10D300C57DA2 /* BottomToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomToolbar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CD18D2328FD0D2C00C57DA2 /* Logging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +104,7 @@
 				3CD18CED28FD02B600C57DA2 /* AppDelegate.swift */,
 				3CD18CEF28FD02B600C57DA2 /* SceneDelegate.swift */,
 				3CD18CF128FD02B600C57DA2 /* ViewController.swift */,
+				3CD18D2428FD10D300C57DA2 /* BottomToolbar.swift */,
 				3CD18CF928FD02B600C57DA2 /* Assets.xcassets */,
 				3CD18CFE28FD02B600C57DA2 /* Info.plist */,
 				3CD18CF628FD02B600C57DA2 /* OrionTestTask.xcdatamodeld */,
@@ -141,6 +146,9 @@
 			dependencies = (
 			);
 			name = OrionTestTask;
+			packageProductDependencies = (
+				3CD18D2228FD0D2C00C57DA2 /* Logging */,
+			);
 			productName = OrionTestTask;
 			productReference = 3CD18CEA28FD02B600C57DA2 /* OrionTestTask.app */;
 			productType = "com.apple.product-type.application";
@@ -213,6 +221,9 @@
 				Base,
 			);
 			mainGroup = 3CD18CE128FD02B600C57DA2;
+			packageReferences = (
+				3CD18D2128FD0D2C00C57DA2 /* XCRemoteSwiftPackageReference "swift-log" */,
+			);
 			productRefGroup = 3CD18CEB28FD02B600C57DA2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -276,6 +287,7 @@
 			files = (
 				3CD18CF828FD02B600C57DA2 /* OrionTestTask.xcdatamodeld in Sources */,
 				3CD18CF228FD02B600C57DA2 /* ViewController.swift in Sources */,
+				3CD18D2528FD10D300C57DA2 /* BottomToolbar.swift in Sources */,
 				3CD18CEE28FD02B600C57DA2 /* AppDelegate.swift in Sources */,
 				3CD18CF028FD02B600C57DA2 /* SceneDelegate.swift in Sources */,
 			);
@@ -598,6 +610,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3CD18D2128FD0D2C00C57DA2 /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3CD18D2228FD0D2C00C57DA2 /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3CD18D2128FD0D2C00C57DA2 /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		3CD18CF628FD02B600C57DA2 /* OrionTestTask.xcdatamodeld */ = {
