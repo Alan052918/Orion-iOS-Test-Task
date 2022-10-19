@@ -18,6 +18,7 @@ public class ViewController: UIViewController {
     private var startButton: UIButton!
 
     private var webView: WKWebView!
+    private var webViewIsHidden: NSKeyValueObservation!
     private var webViewEstimatedProgress: NSKeyValueObservation!
 
     private var backButton: UIBarButtonItem!
@@ -99,6 +100,9 @@ public class ViewController: UIViewController {
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
+        webViewIsHidden = webView.observe(\.isHidden) { [self] newWebView, _ in
+            refreshButton.isEnabled = !newWebView.isHidden
+        }
         webViewEstimatedProgress = webView.observe(\.estimatedProgress) { [self] newWebView, _ in
             progressBar.setProgress(Float(newWebView.estimatedProgress), animated: true)
             if newWebView.estimatedProgress < 1 {
@@ -128,6 +132,9 @@ public class ViewController: UIViewController {
         refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh,
                                         target: webView,
                                         action: #selector(webView.reload))
+        refreshButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.lightGray],
+                                             for: .disabled)
+        refreshButton.isEnabled = false
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         toolbarItems = [spacer, backButton, spacer, forwardButton, spacer, refreshButton, spacer]
 
