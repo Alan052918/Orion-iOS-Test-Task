@@ -9,6 +9,7 @@ import Logging
 import UIKit
 import WebKit
 
+// MARK: UIViewController
 public class ViewController: UIViewController {
 
     private let logger = Logger(label: "com.jundaai.OrionTestTask.ViewController")
@@ -17,14 +18,11 @@ public class ViewController: UIViewController {
     private var startButton: UIButton!
 
     private var webView: WKWebView!
+    private var webViewEstimatedProgress: NSKeyValueObservation!
 
     private var backButton: UIBarButtonItem!
     private var forwardButton: UIBarButtonItem!
     private var refreshButton: UIBarButtonItem!
-
-    private var webViewEstimatedProgress: NSKeyValueObservation!
-    private var webViewCanGoBack: NSKeyValueObservation!
-    private var webViewCanGoForward: NSKeyValueObservation!
 
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,6 +80,37 @@ public class ViewController: UIViewController {
         return webView.load(URLRequest(url: url))
     }
 
+    private func setupWebView() {
+        let webConfiguration = WKWebViewConfiguration()
+        webView = WKWebView(frame: .zero, configuration: webConfiguration)
+        webView.uiDelegate = self
+        webView.navigationDelegate = self
+        webView.underPageBackgroundColor = .clear
+        webView.allowsBackForwardNavigationGestures = true
+
+        view.addSubview(webView)
+        webView.isHidden = true
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        let safeArea = view.safeAreaLayoutGuide
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalToSystemSpacingBelow: safeArea.topAnchor, multiplier: 1.0),
+            webView.bottomAnchor.constraint(equalToSystemSpacingBelow: safeArea.bottomAnchor, multiplier: 1.0),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
+        webViewEstimatedProgress = webView.observe(\.estimatedProgress) { [self] newWebView, _ in
+            progressBar.setProgress(Float(newWebView.estimatedProgress), animated: true)
+            if newWebView.estimatedProgress < 1 {
+                progressBar.isHidden = false
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
+                progressBar.isHidden = true
+            }
+        }
+    }
+
     private func setupBottomToolbar() {
         backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
                                      style: .plain,
@@ -128,49 +157,14 @@ public class ViewController: UIViewController {
         }
     }
 
-    private func setupWebView() {
-        let webConfiguration = WKWebViewConfiguration()
-        webView = WKWebView(frame: .zero, configuration: webConfiguration)
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
-        webView.underPageBackgroundColor = .clear
-        webView.allowsBackForwardNavigationGestures = true
-
-        view.addSubview(webView)
-        webView.isHidden = true
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        let safeArea = view.safeAreaLayoutGuide
-        NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalToSystemSpacingBelow: safeArea.topAnchor, multiplier: 1.0),
-            webView.bottomAnchor.constraint(equalToSystemSpacingBelow: safeArea.bottomAnchor, multiplier: 1.0),
-            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-
-        webViewEstimatedProgress = webView.observe(\.estimatedProgress) { [self] newWebView, _ in
-            progressBar.setProgress(Float(newWebView.estimatedProgress), animated: true)
-            if newWebView.estimatedProgress < 1 {
-                progressBar.isHidden = false
-                return
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
-                progressBar.isHidden = true
-            }
-        }
-        webViewCanGoBack = webView.observe(\.canGoBack) { [self] newWebView, _ in
-            backButton.isEnabled = newWebView.canGoBack || !webView.isHidden
-        }
-        webViewCanGoForward = webView.observe(\.canGoForward) { [self] newWebView, _ in
-            forwardButton.isEnabled = newWebView.canGoForward || webView.isHidden
-        }
-    }
-
 }
 
+// MARK: WKUIDelegate
 extension ViewController: WKUIDelegate {
 
 }
 
+// MARK: WKNavigationDelegate
 extension ViewController: WKNavigationDelegate {
 
     public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
