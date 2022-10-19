@@ -85,14 +85,14 @@ public class ViewController: UIViewController {
     private func setupBottomToolbar() {
         backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
                                      style: .plain,
-                                     target: webView,
-                                     action: #selector(webView.goBack))
+                                     target: self,
+                                     action: #selector(backButtonDidPress))
         backButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.lightGray], for: .disabled)
         backButton.isEnabled = false
         forwardButton = UIBarButtonItem(image: UIImage(systemName: "chevron.forward"),
                                         style: .plain,
-                                        target: webView,
-                                        action: #selector(webView.goForward))
+                                        target: self,
+                                        action: #selector(forwardButtonDidPress))
         forwardButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.lightGray],
                                              for: .disabled)
         forwardButton.isEnabled = false
@@ -108,12 +108,24 @@ public class ViewController: UIViewController {
 
     @objc func backButtonDidPress() {
         logger.info("back button pressed")
-        webView.goBack()
+        if webView.canGoBack {
+            webView.goBack()
+        } else {
+            webView.isHidden = true
+            backButton.isEnabled = false
+            forwardButton.isEnabled = true
+        }
     }
 
     @objc func forwardButtonDidPress() {
         logger.info("forward button pressed")
-        webView.goForward()
+        if webView.isHidden {
+            webView.isHidden = false
+            backButton.isEnabled = true
+            forwardButton.isEnabled = webView.canGoForward
+        } else if webView.canGoForward {
+            webView.goForward()
+        }
     }
 
     private func setupWebView() {
@@ -146,10 +158,10 @@ public class ViewController: UIViewController {
             }
         }
         webViewCanGoBack = webView.observe(\.canGoBack) { [self] newWebView, _ in
-            backButton.isEnabled = newWebView.canGoBack
+            backButton.isEnabled = newWebView.canGoBack || !webView.isHidden
         }
         webViewCanGoForward = webView.observe(\.canGoForward) { [self] newWebView, _ in
-            forwardButton.isEnabled = newWebView.canGoForward
+            forwardButton.isEnabled = newWebView.canGoForward || webView.isHidden
         }
     }
 
@@ -160,5 +172,11 @@ extension ViewController: WKUIDelegate {
 }
 
 extension ViewController: WKNavigationDelegate {
+
+    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        logger.info("did finish loading \(webView.title!)")
+        backButton.isEnabled = webView.canGoBack || !webView.isHidden
+        forwardButton.isEnabled = webView.canGoForward || webView.isHidden
+    }
 
 }
