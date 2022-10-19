@@ -69,6 +69,7 @@ public class ViewController: UIViewController {
     }
 
     @objc func startButtonDidPress() {
+        setupWebView()
         webView.isHidden = false
         let url = URL(string: "https://www.kagi.com")!
         Task {
@@ -131,8 +132,8 @@ public class ViewController: UIViewController {
                                              for: .disabled)
         forwardButton.isEnabled = false
         refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh,
-                                        target: webView,
-                                        action: #selector(webView.reload))
+                                        target: self,
+                                        action: #selector(refreshButtonDidPress))
         refreshButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.lightGray],
                                              for: .disabled)
         refreshButton.isEnabled = false
@@ -163,6 +164,13 @@ public class ViewController: UIViewController {
         } else if webView.canGoForward {
             webView.goForward()
         }
+    }
+
+    @objc func refreshButtonDidPress() {
+        logger.info("refresh button pressed")
+        progressBar.isHidden = false
+        progressBar.setProgress(0.0, animated: true)
+        webView.reload()
     }
 
 }
