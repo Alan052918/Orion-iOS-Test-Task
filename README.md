@@ -9,3 +9,4 @@ Tasks:
 - [x] Back/forward navigation from/to initial blank view, corresponding enabled state of back/forward(/refresh) buttons
 - [ ] Horizontal navigation gesture from screen edges
 - [ ] save/restore WKWebView navigation history between app launches
+- [ ] Landscape mode: move buttons from bottom toolbar to navigationbar
