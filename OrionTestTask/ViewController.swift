@@ -10,32 +10,32 @@ import UIKit
 import WebKit
 
 // MARK: UIViewController
-public class ViewController: UIViewController {
+class ViewController: UIViewController {
 
-    private let logger = Logger(label: "com.jundaai.OrionTestTask.ViewController")
+    let logger = Logger(label: "com.jundaai.OrionTestTask.ViewController")
 
-    private var progressBar: UIProgressView!
-    private var startButton: UIButton!
+    var progressBar = UIProgressView()
+    var startButton = UIButton()
 
-    private var webView: WKWebView!
-    private var webViewIsHidden: NSKeyValueObservation!
-    private var webViewEstimatedProgress: NSKeyValueObservation!
+    var backButton: UIBarButtonItem!
+    var forwardButton: UIBarButtonItem!
+    var refreshButton: UIBarButtonItem!
 
-    private var backButton: UIBarButtonItem!
-    private var forwardButton: UIBarButtonItem!
-    private var refreshButton: UIBarButtonItem!
+    var webView = WKWebView()
+    private var webViewIsHidden: NSKeyValueObservation?
+    private var webViewEstimatedProgress: NSKeyValueObservation?
 
-    public override func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         setupProgressBar()
         setupStartButton()
+        setupToolbar()
         setupWebView()
-        setupBottomToolbar()
     }
 
-    private func setupProgressBar() {
-        progressBar = UIProgressView(progressViewStyle: .default)
+    func setupProgressBar() {
+        progressBar.progressViewStyle = .default
         progressBar.backgroundColor = .gray
         progressBar.tintColor = .blue
         progressBar.setProgress(0.0, animated: true)
@@ -50,8 +50,7 @@ public class ViewController: UIViewController {
         ])
     }
 
-    private func setupStartButton() {
-        startButton = UIButton()
+    func setupStartButton() {
         startButton.configuration = .filled()
         startButton.configuration?.title = "kagi.com"
         startButton.configuration?.baseBackgroundColor = .systemBlue
@@ -69,7 +68,6 @@ public class ViewController: UIViewController {
     }
 
     @objc func startButtonDidPress() {
-        setupWebView()
         webView.isHidden = false
         let url = URL(string: "https://www.kagi.com")!
         Task {
@@ -77,18 +75,15 @@ public class ViewController: UIViewController {
         }
     }
 
-    @discardableResult
-    private func loadURL(url: URL) async -> WKNavigation? {
+    @discardableResult func loadURL(url: URL) async -> WKNavigation? {
         return webView.load(URLRequest(url: url))
     }
 
-    private func setupWebView() {
-        let webConfiguration = WKWebViewConfiguration()
-        webView = WKWebView(frame: .zero, configuration: webConfiguration)
-        webView.uiDelegate = self
-        webView.navigationDelegate = self
+    func setupWebView() {
         webView.underPageBackgroundColor = .clear
         webView.allowsBackForwardNavigationGestures = true
+        webView.uiDelegate = self
+        webView.navigationDelegate = self
 
         view.addSubview(webView)
         webView.isHidden = true
@@ -96,14 +91,14 @@ public class ViewController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
             webView.topAnchor.constraint(equalToSystemSpacingBelow: safeArea.topAnchor, multiplier: 1.0),
-            // FIXME: set webView.bottomAnchor to toolbar.topAnchor
-            webView.bottomAnchor.constraint(equalToSystemSpacingBelow: safeArea.bottomAnchor, multiplier: 1.0),
+            webView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
         webViewIsHidden = webView.observe(\.isHidden) { [self] newWebView, _ in
             refreshButton.isEnabled = !newWebView.isHidden
+            startButton.isHidden = !newWebView.isHidden
         }
         webViewEstimatedProgress = webView.observe(\.estimatedProgress) { [self] newWebView, _ in
             progressBar.setProgress(Float(newWebView.estimatedProgress), animated: true)
@@ -117,7 +112,7 @@ public class ViewController: UIViewController {
         }
     }
 
-    private func setupBottomToolbar() {
+    func setupToolbar() {
         backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
                                      style: .plain,
                                      target: self,
@@ -139,9 +134,6 @@ public class ViewController: UIViewController {
         refreshButton.isEnabled = false
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         toolbarItems = [spacer, backButton, spacer, forwardButton, spacer, refreshButton, spacer]
-
-        navigationController?.navigationBar.isHidden = true
-        navigationController?.isToolbarHidden = false
     }
 
     @objc func backButtonDidPress() {
@@ -183,7 +175,7 @@ extension ViewController: WKUIDelegate {
 // MARK: WKNavigationDelegate
 extension ViewController: WKNavigationDelegate {
 
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         logger.info("did finish loading \(webView.title!)")
         backButton.isEnabled = webView.canGoBack || !webView.isHidden
         forwardButton.isEnabled = webView.canGoForward || webView.isHidden
