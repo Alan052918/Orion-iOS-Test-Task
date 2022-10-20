@@ -36,8 +36,6 @@ class ViewController: UIViewController {
 
     func setupProgressBar() {
         progressBar.progressViewStyle = .default
-        progressBar.backgroundColor = .gray
-        progressBar.tintColor = .blue
         progressBar.setProgress(0.0, animated: true)
 
         view.addSubview(progressBar)
