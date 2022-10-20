@@ -51,7 +51,6 @@ class ViewController: UIViewController {
     func setupStartButton() {
         startButton.configuration = .filled()
         startButton.configuration?.title = "kagi.com"
-        startButton.configuration?.baseBackgroundColor = .systemBlue
         startButton.addTarget(self, action: #selector(startButtonDidPress), for: .touchUpInside)
 
         view.addSubview(startButton)
