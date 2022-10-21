@@ -220,6 +220,7 @@ extension ViewController: WKNavigationDelegate {
 
 }
 
+// MARK: UIGestureRecognizerDelegate
 extension ViewController: UIGestureRecognizerDelegate {
 
 }
