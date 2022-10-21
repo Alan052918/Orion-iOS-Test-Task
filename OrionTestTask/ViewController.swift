@@ -14,14 +14,17 @@ class ViewController: UIViewController {
 
     let logger = Logger(label: "com.jundaai.OrionTestTask.ViewController")
 
-    var progressBar = UIProgressView()
-    var startButton = UIButton()
+    let progressBar = UIProgressView()
+    let startButton = UIButton()
 
     var backButton: UIBarButtonItem!
     var forwardButton: UIBarButtonItem!
     var refreshButton: UIBarButtonItem!
 
-    var webView = WKWebView()
+    let leftEdgePanGestureRecognizer = UIScreenEdgePanGestureRecognizer()
+    let rightEdgePanGestureRecognizer = UIScreenEdgePanGestureRecognizer()
+
+    lazy var webView = WKWebView()
     private var webViewIsHidden: NSKeyValueObservation?
     private var webViewEstimatedProgress: NSKeyValueObservation?
 
@@ -31,6 +34,7 @@ class ViewController: UIViewController {
         setupProgressBar()
         setupStartButton()
         setupToolbar()
+        setupGestureRecognizers()
         setupWebView()
     }
 
@@ -137,6 +141,46 @@ class ViewController: UIViewController {
 
     @objc func backButtonDidPress() {
         logger.info("back button pressed")
+        webViewGoBack()
+    }
+
+    @objc func forwardButtonDidPress() {
+        logger.info("forward button pressed")
+        webViewGoForward()
+    }
+
+    @objc func refreshButtonDidPress() {
+        logger.info("refresh button pressed")
+        progressBar.isHidden = false
+        progressBar.setProgress(0.0, animated: true)
+        webView.reload()
+    }
+
+    func setupGestureRecognizers() {
+        leftEdgePanGestureRecognizer.addTarget(self, action: #selector(leftScreenEdgeDidSwipe))
+        leftEdgePanGestureRecognizer.edges = .left
+        leftEdgePanGestureRecognizer.delegate = self
+        view.addGestureRecognizer(leftEdgePanGestureRecognizer)
+
+        rightEdgePanGestureRecognizer.addTarget(self, action: #selector(rightScreenEdgeDidSwipe))
+        rightEdgePanGestureRecognizer.edges = .right
+        rightEdgePanGestureRecognizer.delegate = self
+        view.addGestureRecognizer(rightEdgePanGestureRecognizer)
+    }
+
+    @objc func leftScreenEdgeDidSwipe(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        logger.info("left screen edge swiped")
+        webViewGoBack()
+    }
+
+    @objc func rightScreenEdgeDidSwipe(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        logger.info("right screen edge swiped")
+        webViewGoForward()
+    }
+
+    func webViewGoBack() {
+        guard backButton != nil,
+              forwardButton != nil else { return }
         if webView.canGoBack {
             webView.goBack()
         } else {
@@ -146,8 +190,9 @@ class ViewController: UIViewController {
         }
     }
 
-    @objc func forwardButtonDidPress() {
-        logger.info("forward button pressed")
+    func webViewGoForward() {
+        guard backButton != nil,
+              forwardButton != nil else { return }
         if webView.isHidden {
             webView.isHidden = false
             backButton.isEnabled = true
@@ -155,13 +200,6 @@ class ViewController: UIViewController {
         } else if webView.canGoForward {
             webView.goForward()
         }
-    }
-
-    @objc func refreshButtonDidPress() {
-        logger.info("refresh button pressed")
-        progressBar.isHidden = false
-        progressBar.setProgress(0.0, animated: true)
-        webView.reload()
     }
 
 }
@@ -179,5 +217,9 @@ extension ViewController: WKNavigationDelegate {
         backButton.isEnabled = webView.canGoBack || !webView.isHidden
         forwardButton.isEnabled = webView.canGoForward || webView.isHidden
     }
+
+}
+
+extension ViewController: UIGestureRecognizerDelegate {
 
 }
