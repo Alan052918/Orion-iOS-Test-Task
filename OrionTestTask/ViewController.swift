@@ -50,15 +50,14 @@ class ViewController: UIViewController {
 
     func setupStartButton() {
         startButton.configuration = .filled()
-        startButton.configuration?.title = "kagi.com"
+        startButton.configuration?.title = "start"
         startButton.addTarget(self, action: #selector(startButtonDidPress), for: .touchUpInside)
 
         view.addSubview(startButton)
         startButton.translatesAutoresizingMaskIntoConstraints = false
-        let margins = view.layoutMarginsGuide
         NSLayoutConstraint.activate([
-            startButton.centerXAnchor.constraint(equalTo: margins.centerXAnchor),
-            startButton.centerYAnchor.constraint(equalTo: margins.centerYAnchor),
+            startButton.centerXAnchor.constraint(equalTo: view.layoutMarginsGuide.centerXAnchor),
+            startButton.centerYAnchor.constraint(equalTo: view.layoutMarginsGuide.centerYAnchor),
             startButton.widthAnchor.constraint(equalToConstant: 100),
             startButton.heightAnchor.constraint(equalToConstant: 50)
         ])
@@ -66,7 +65,10 @@ class ViewController: UIViewController {
 
     @objc func startButtonDidPress() {
         webView.isHidden = false
-        let url = URL(string: "https://www.kagi.com")!
+//        let url = URL(string: "https://www.kagi.com")!
+//        let url = URL(string: "https://github1s.com/lynoapp/")!
+        // swiftlint:disable:next line_length
+        let url = URL(string: "https://stil.kurir.rs/moda/157971/ovo-su-najstilizovanije-zene-sveta-koja-je-po-vama-br-1-anketa")!
         Task {
             await loadURL(url: url)
         }
