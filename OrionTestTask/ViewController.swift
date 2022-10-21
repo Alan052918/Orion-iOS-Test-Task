@@ -116,26 +116,18 @@ class ViewController: UIViewController {
     }
 
     func setupToolbar() {
-        backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.backward"),
-                                     style: .plain,
-                                     target: self,
-                                     action: #selector(backButtonDidPress))
-        backButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.lightGray], for: .disabled)
-        backButton.isEnabled = false
-        forwardButton = UIBarButtonItem(image: UIImage(systemName: "chevron.forward"),
-                                        style: .plain,
-                                        target: self,
-                                        action: #selector(forwardButtonDidPress))
-        forwardButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.lightGray],
-                                             for: .disabled)
-        forwardButton.isEnabled = false
-        refreshButton = UIBarButtonItem(barButtonSystemItem: .refresh,
-                                        target: self,
-                                        action: #selector(refreshButtonDidPress))
-        refreshButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.lightGray],
-                                             for: .disabled)
-        refreshButton.isEnabled = false
-        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        backButton = ToolbarButtonItem(image: UIImage(systemName: "chevron.backward"),
+                                       style: .plain,
+                                       target: self,
+                                       action: #selector(backButtonDidPress))
+        forwardButton = ToolbarButtonItem(image: UIImage(systemName: "chevron.forward"),
+                                          style: .plain,
+                                          target: self,
+                                          action: #selector(forwardButtonDidPress))
+        refreshButton = ToolbarButtonItem(barButtonSystemItem: .refresh,
+                                          target: self,
+                                          action: #selector(refreshButtonDidPress))
+        let spacer = ToolbarButtonItem.spacer()
         toolbarItems = [spacer, backButton, spacer, forwardButton, spacer, refreshButton, spacer]
     }
 
