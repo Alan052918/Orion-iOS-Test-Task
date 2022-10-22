@@ -24,7 +24,7 @@ class ViewController: UIViewController {
     let leftEdgePanGestureRecognizer = UIScreenEdgePanGestureRecognizer()
     let rightEdgePanGestureRecognizer = UIScreenEdgePanGestureRecognizer()
 
-    lazy var webView = WKWebView()
+    let webView = WKWebView()
     private var webViewIsHidden: NSKeyValueObservation?
     private var webViewEstimatedProgress: NSKeyValueObservation?
 
