@@ -73,13 +73,7 @@ class ViewController: UIViewController {
 //        let url = URL(string: "https://github1s.com/lynoapp/")!
         // swiftlint:disable:next line_length
         let url = URL(string: "https://stil.kurir.rs/moda/157971/ovo-su-najstilizovanije-zene-sveta-koja-je-po-vama-br-1-anketa")!
-        Task {
-            await loadURL(url: url)
-        }
-    }
-
-    @discardableResult func loadURL(url: URL) async -> WKNavigation? {
-        return webView.load(URLRequest(url: url))
+        webView.load(URLRequest(url: url))
     }
 
     func setupWebView() {
@@ -215,4 +209,15 @@ extension ViewController: WKNavigationDelegate {
 // MARK: UIGestureRecognizerDelegate
 extension ViewController: UIGestureRecognizerDelegate {
 
+}
+
+extension ViewController {
+
+    static let restoreWebViewKey = "webView"
+
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+
+
+    }
 }
