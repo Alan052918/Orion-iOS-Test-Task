@@ -63,8 +63,11 @@ class ViewController: UIViewController {
     }
 
     func setupStartButton() {
-        startButton.configuration = .filled()
-        startButton.configuration?.title = "start"
+        startButton.layer.cornerRadius = 8
+        startButton.layer.cornerCurve = .continuous
+        startButton.backgroundColor = .systemBlue
+        startButton.setTitleColor(.white, for: .normal)
+        startButton.setTitle("start", for: .normal)
         startButton.addTarget(self, action: #selector(startButtonDidPress), for: .touchUpInside)
 
         view.addSubview(startButton)
@@ -89,7 +92,6 @@ class ViewController: UIViewController {
     }
 
     func setupWebView() {
-        webView.underPageBackgroundColor = .systemBackground
         webView.allowsBackForwardNavigationGestures = true
         webView.uiDelegate = self
         webView.navigationDelegate = self
