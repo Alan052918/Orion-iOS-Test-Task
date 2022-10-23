@@ -9,7 +9,7 @@ import UIKit
 
 class ToolbarButtonItem: UIBarButtonItem {
 
-    private static let spacerItem: UIBarButtonItem = {
+    static let spacerItem: UIBarButtonItem = {
         return UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
     }()
 
