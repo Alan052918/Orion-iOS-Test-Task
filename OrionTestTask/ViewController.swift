@@ -203,9 +203,9 @@ class ViewController: UIViewController {
                 webView.transform = CGAffineTransform(translationX: webViewTranslation.x, y: 0)
             }
         case .ended:
-            let popCompleted = webViewTranslation.x > view.frame.width / 2
-            logger.info("LEFT screen edge pan gesture ENDED: \(popCompleted ? "completed" : "cancelled")")
-            if popCompleted {
+            let popShouldComplete = webViewTranslation.x > view.frame.width / 2
+            logger.info("LEFT screen edge pan gesture ENDED: \(popShouldComplete ? "completed" : "cancelled")")
+            if popShouldComplete {
                 // completed: pop webView out of screen
                 UIView.animate(withDuration: 0.2, delay: 0, animations: { [self] in
                     webView.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
@@ -248,9 +248,9 @@ class ViewController: UIViewController {
                 webView.transform = CGAffineTransform(translationX: view.frame.width + webViewTranslation.x, y: 0)
             }
         case .ended:
-            let pushCompleted = -webViewTranslation.x > view.frame.width / 2
-            logger.info("RIGHT screen edge pan gesture ENDED: \(pushCompleted ? "completed" : "cancelled")")
-            if pushCompleted {
+            let pushShouldComplete = -webViewTranslation.x > view.frame.width / 2
+            logger.info("RIGHT screen edge pan gesture ENDED: \(pushShouldComplete ? "completed" : "cancelled")")
+            if pushShouldComplete {
                 // completed: push webView to full screen position
                 UIView.animate(withDuration: 0.2, delay: 0, animations: { [self] in
                     webView.transform = .identity
