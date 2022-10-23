@@ -2,15 +2,19 @@
 
 Use UIKit and WebKit in Swift to implement web page navigation and page zoom features.
 
-## Tasks:
+## Tasks
 
 - [x] WKWebView and bottom toolbar back/forward(/refresh) navigation buttons
-- [x] Initial blank view with centered start button which load kagi.com in WKWebView full screen
-- [x] Back/forward navigation from/to initial blank view, corresponding enabled state of back/forward(/refresh) buttons
-- [x] Horizontal navigation gesture from screen edges
+- [x] Start view with centered start button which load a URL in WKWebView full screen
+- [x] Back/forward buttons navigation:
+  - Through WKWebView.backForwardList and between start view and WKWebView
+  - Corresponding enabled states of back/forward(/refresh) buttons
+- [x] Screen edge pan gestures navigation:
+  - Through WKWebView.backForwardList and between start view and WKWebView
+  - Corresponding enabled states of back/forward(/refresh) buttons
 - [ ] Save/restore WKWebView navigation history between app launches
 
-## Package Dependencies:
+## Package Dependencies
 
 - [SwiftLog](https://github.com/apple/swift-log): logging
 - [SwiftLint](https://github.com/realm/SwiftLint): format and style enforcement
