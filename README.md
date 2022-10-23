@@ -1,6 +1,8 @@
 # Orion iOS test task
 
-Use UIKit and WebKit in Swift to implement web page navigation and page zoom features.
+Use UIKit and WebKit in Swift to implement web page navigation, page zoom, and app state restoration features.
+
+Minimum deployment target: iOS 13.0
 
 ## Tasks
 
