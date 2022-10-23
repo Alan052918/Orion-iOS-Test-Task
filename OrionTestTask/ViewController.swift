@@ -9,6 +9,11 @@ import Logging
 import UIKit
 import WebKit
 
+enum NavigationSenderType {
+    case button
+    case gesture
+}
+
 // MARK: UIViewController
 class ViewController: UIViewController {
 
@@ -25,8 +30,13 @@ class ViewController: UIViewController {
     let rightEdgePanGestureRecognizer = UIScreenEdgePanGestureRecognizer()
 
     let webView = WKWebView()
-    private var webViewIsHidden: NSKeyValueObservation?
-    private var webViewEstimatedProgress: NSKeyValueObservation?
+    var webViewEstimatedProgress: NSKeyValueObservation?
+    var fullWebViewIsVisible = false {
+        didSet {
+            refreshButton.isEnabled = fullWebViewIsVisible
+            startButton.isHidden = fullWebViewIsVisible
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +50,7 @@ class ViewController: UIViewController {
 
     func setupProgressBar() {
         progressBar.progressViewStyle = .default
-        progressBar.setProgress(0.0, animated: true)
+        progressBar.setProgress(0.0, animated: false)
 
         view.addSubview(progressBar)
         progressBar.isHidden = true
@@ -74,10 +84,12 @@ class ViewController: UIViewController {
         // swiftlint:disable:next line_length
         let url = URL(string: "https://stil.kurir.rs/moda/157971/ovo-su-najstilizovanije-zene-sveta-koja-je-po-vama-br-1-anketa")!
         webView.load(URLRequest(url: url))
+
+        fullWebViewIsVisible = true
     }
 
     func setupWebView() {
-        webView.underPageBackgroundColor = .clear
+        webView.underPageBackgroundColor = .systemBackground
         webView.allowsBackForwardNavigationGestures = true
         webView.uiDelegate = self
         webView.navigationDelegate = self
@@ -93,19 +105,8 @@ class ViewController: UIViewController {
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
-        webViewIsHidden = webView.observe(\.isHidden) { [self] newWebView, _ in
-            refreshButton.isEnabled = !newWebView.isHidden
-            startButton.isHidden = !newWebView.isHidden
-        }
         webViewEstimatedProgress = webView.observe(\.estimatedProgress) { [self] newWebView, _ in
             progressBar.setProgress(Float(newWebView.estimatedProgress), animated: true)
-            if newWebView.estimatedProgress < 1 {
-                progressBar.isHidden = false
-                return
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
-                progressBar.isHidden = true
-            }
         }
     }
 
@@ -127,64 +128,149 @@ class ViewController: UIViewController {
 
     @objc func backButtonDidPress() {
         logger.info("back button pressed")
-        webViewGoBack()
-    }
-
-    @objc func forwardButtonDidPress() {
-        logger.info("forward button pressed")
-        webViewGoForward()
-    }
-
-    @objc func refreshButtonDidPress() {
-        logger.info("refresh button pressed")
-        progressBar.isHidden = false
-        progressBar.setProgress(0.0, animated: true)
-        webView.reload()
-    }
-
-    func setupGestureRecognizers() {
-        leftEdgePanGestureRecognizer.addTarget(self, action: #selector(leftScreenEdgeDidSwipe))
-        leftEdgePanGestureRecognizer.edges = .left
-        leftEdgePanGestureRecognizer.delegate = self
-        view.addGestureRecognizer(leftEdgePanGestureRecognizer)
-
-        rightEdgePanGestureRecognizer.addTarget(self, action: #selector(rightScreenEdgeDidSwipe))
-        rightEdgePanGestureRecognizer.edges = .right
-        rightEdgePanGestureRecognizer.delegate = self
-        view.addGestureRecognizer(rightEdgePanGestureRecognizer)
-    }
-
-    @objc func leftScreenEdgeDidSwipe(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
-        logger.info("left screen edge swiped")
-        webViewGoBack()
-    }
-
-    @objc func rightScreenEdgeDidSwipe(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
-        logger.info("right screen edge swiped")
-        webViewGoForward()
-    }
-
-    func webViewGoBack() {
         guard backButton != nil,
               forwardButton != nil else { return }
         if webView.canGoBack {
             webView.goBack()
         } else {
             webView.isHidden = true
+            startButton.isHidden = false
             backButton.isEnabled = false
             forwardButton.isEnabled = true
         }
     }
 
-    func webViewGoForward() {
+    @objc func forwardButtonDidPress() {
+        logger.info("forward button pressed")
         guard backButton != nil,
               forwardButton != nil else { return }
         if webView.isHidden {
             webView.isHidden = false
+            startButton.isHidden = true
             backButton.isEnabled = true
             forwardButton.isEnabled = webView.canGoForward
         } else if webView.canGoForward {
             webView.goForward()
+        }
+    }
+
+    @objc func refreshButtonDidPress() {
+        logger.info("refresh button pressed")
+        webView.reload()
+    }
+
+    func setupGestureRecognizers() {
+        leftEdgePanGestureRecognizer.addTarget(self, action: #selector(leftScreenEdgeDidSwipe(_:)))
+        leftEdgePanGestureRecognizer.edges = .left
+        leftEdgePanGestureRecognizer.delegate = self
+        view.addGestureRecognizer(leftEdgePanGestureRecognizer)
+
+        rightEdgePanGestureRecognizer.addTarget(self, action: #selector(rightScreenEdgeDidSwipe(_:)))
+        rightEdgePanGestureRecognizer.edges = .right
+        rightEdgePanGestureRecognizer.delegate = self
+        view.addGestureRecognizer(rightEdgePanGestureRecognizer)
+    }
+
+    @objc func leftScreenEdgeDidSwipe(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        logger.info("LEFT screen edge swiped")
+        if fullWebViewIsVisible {
+            popWebView(gestureRecognizer: gestureRecognizer)
+        }
+    }
+
+    @objc func rightScreenEdgeDidSwipe(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        logger.info("RIGHT screen edge swiped")
+        if !fullWebViewIsVisible {
+            pushWebView(gestureRecognizer: gestureRecognizer)
+        }
+    }
+
+    func popWebView(gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        let webViewTranslation = gestureRecognizer.translation(in: view)
+        switch gestureRecognizer.state {
+        case .began:
+            logger.info("LEFT screen edge pan gesture BEGAN")
+            startButton.isHidden = false
+        case .changed:
+            logger.info("LEFT screen edge pan gesture CHANGED: translation.x: \(webViewTranslation.x)")
+            UIView.animate(withDuration: 0, delay: 0) { [self] in
+                webView.transform = CGAffineTransform(translationX: webViewTranslation.x, y: 0)
+            }
+        case .ended:
+            let popCompleted = webViewTranslation.x > view.frame.width / 2
+            logger.info("LEFT screen edge pan gesture ENDED: \(popCompleted ? "completed" : "cancelled")")
+            if popCompleted {
+                // completed: pop webView out of screen
+                UIView.animate(withDuration: 0.2, delay: 0, animations: { [self] in
+                    webView.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
+                }, completion: { [self] _ in
+                    webView.isHidden = true
+                    webView.transform = .identity
+
+                    fullWebViewIsVisible = false
+
+                    backButton.isEnabled = false
+                    forwardButton.isEnabled = true
+                })
+            } else {
+                // cancelled: reset webView to full screen position
+                UIView.animate(withDuration: 0.2, delay: 0, animations: { [self] in
+                    webView.transform = .identity
+                }, completion: { [self] _ in
+                    fullWebViewIsVisible = true
+
+                    startButton.isHidden = true
+                    backButton.isEnabled = true
+                    forwardButton.isEnabled = webView.canGoForward
+                })
+            }
+        default:
+            break
+        }
+    }
+
+    func pushWebView(gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        let webViewTranslation = gestureRecognizer.translation(in: view)
+        switch gestureRecognizer.state {
+        case .began:
+            logger.info("RIGHT screen edge pan gesture BEGAN: translation.x: \(webViewTranslation.x)")
+            webView.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
+            webView.isHidden = false
+        case .changed:
+            logger.info("RIGHT screen edge pan gesture CHANGED: translation.x: \(webViewTranslation.x)")
+            UIView.animate(withDuration: 0, delay: 0) { [self] in
+                webView.transform = CGAffineTransform(translationX: view.frame.width + webViewTranslation.x, y: 0)
+            }
+        case .ended:
+            let pushCompleted = -webViewTranslation.x > view.frame.width / 2
+            logger.info("RIGHT screen edge pan gesture ENDED: \(pushCompleted ? "completed" : "cancelled")")
+            if pushCompleted {
+                // completed: push webView to full screen position
+                UIView.animate(withDuration: 0.2, delay: 0, animations: { [self] in
+                    webView.transform = .identity
+                }, completion: { [self] _ in
+                    fullWebViewIsVisible = true
+
+                    startButton.isHidden = true
+                    backButton.isEnabled = true
+                    forwardButton.isEnabled = webView.canGoForward
+                })
+            } else {
+                // cancelled: pop webView out of screen
+                UIView.animate(withDuration: 0.2, delay: 0, animations: { [self] in
+                    webView.transform = CGAffineTransform(translationX: view.frame.width, y: 0)
+                }, completion: { [self] _ in
+                    webView.isHidden = true
+                    webView.transform = .identity
+
+                    fullWebViewIsVisible = false
+
+                    backButton.isEnabled = false
+                    forwardButton.isEnabled = true
+                })
+            }
+        default:
+            break
         }
     }
 
@@ -198,10 +284,25 @@ extension ViewController: WKUIDelegate {
 // MARK: WKNavigationDelegate
 extension ViewController: WKNavigationDelegate {
 
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+        logger.info("did commit loading \(webView.title!)")
+
+        progressBar.setProgress(0.0, animated: false)
+        progressBar.isHidden = false
+        progressBar.alpha = 1
+    }
+
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         logger.info("did finish loading \(webView.title!)")
-        backButton.isEnabled = webView.canGoBack || !webView.isHidden
-        forwardButton.isEnabled = webView.canGoForward || webView.isHidden
+
+        backButton.isEnabled = webView.canGoBack || fullWebViewIsVisible
+        forwardButton.isEnabled = webView.canGoForward || !fullWebViewIsVisible
+
+        UIView.animate(withDuration: 0.2, delay: 0.2, animations: { [self] in
+            progressBar.alpha = 0
+        }, completion: { [self] _ in
+            progressBar.isHidden = true
+        })
     }
 
 }
@@ -209,15 +310,4 @@ extension ViewController: WKNavigationDelegate {
 // MARK: UIGestureRecognizerDelegate
 extension ViewController: UIGestureRecognizerDelegate {
 
-}
-
-extension ViewController {
-
-    static let restoreWebViewKey = "webView"
-
-    override func encodeRestorableState(with coder: NSCoder) {
-        super.encodeRestorableState(with: coder)
-
-
-    }
 }
