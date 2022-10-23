@@ -1,11 +1,14 @@
 # Orion iOS test task
 
-Use UIKit and WebKit in Swift to implement web page navigation and page zoom features.
+Use UIKit and WebKit in Swift to implement web page navigation, page zoom, and app state restoration features.
+
+Minimum deployment target: iOS 13.0
 
 ## Tasks
 
 - [x] WKWebView and bottom toolbar back/forward(/refresh) navigation buttons
 - [x] Start view with centered start button which load a URL in WKWebView full screen
+  - Top progress bar appear on loading a URL, fade out with animation on finishing loading
 - [x] Back/forward buttons navigation:
   - Through WKWebView.backForwardList and between start view and WKWebView
   - Corresponding enabled states of back/forward(/refresh) buttons
