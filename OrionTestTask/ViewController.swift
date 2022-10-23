@@ -134,6 +134,9 @@ class ViewController: UIViewController {
             webView.goBack()
         } else {
             webView.isHidden = true
+
+            fullWebViewIsVisible = false
+
             startButton.isHidden = false
             backButton.isEnabled = false
             forwardButton.isEnabled = true
@@ -146,6 +149,9 @@ class ViewController: UIViewController {
               forwardButton != nil else { return }
         if webView.isHidden {
             webView.isHidden = false
+
+            fullWebViewIsVisible = true
+
             startButton.isHidden = true
             backButton.isEnabled = true
             forwardButton.isEnabled = webView.canGoForward
