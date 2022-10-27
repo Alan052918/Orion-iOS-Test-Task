@@ -9,11 +9,6 @@ import Logging
 import UIKit
 import WebKit
 
-enum NavigationSenderType {
-    case button
-    case gesture
-}
-
 // MARK: UIViewController
 class ViewController: UIViewController {
 
@@ -33,14 +28,21 @@ class ViewController: UIViewController {
     var webViewEstimatedProgress: NSKeyValueObservation?
     var fullWebViewIsVisible = false {
         didSet {
-            refreshButton.isEnabled = fullWebViewIsVisible
             startButton.isHidden = fullWebViewIsVisible
+            backButton.isEnabled = fullWebViewIsVisible
+            refreshButton.isEnabled = fullWebViewIsVisible
         }
     }
 
+    var restoredWebViewInteractionState: Any!
+    var restoredFullWebViewVisibleState: Bool!
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         view.backgroundColor = .systemBackground
+        view.restorationIdentifier = "baseView"
+
         setupProgressBar()
         setupStartButton()
         setupToolbar()
@@ -48,8 +50,28 @@ class ViewController: UIViewController {
         setupWebView()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if restoredWebViewInteractionState != nil {
+            webView.interactionState = restoredWebViewInteractionState
+        }
+        if restoredFullWebViewVisibleState != nil {
+            fullWebViewIsVisible = restoredFullWebViewVisibleState
+        }
+
+        updateUserActivity()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        view.window?.windowScene?.userActivity = nil
+    }
+
     func setupProgressBar() {
         progressBar.progressViewStyle = .default
+        progressBar.restorationIdentifier = "progressBar"
         progressBar.setProgress(0.0, animated: false)
 
         view.addSubview(progressBar)
@@ -68,6 +90,7 @@ class ViewController: UIViewController {
         startButton.backgroundColor = .systemBlue
         startButton.setTitleColor(.white, for: .normal)
         startButton.setTitle("start", for: .normal)
+        startButton.restorationIdentifier = "startButton"
         startButton.addTarget(self, action: #selector(startButtonDidPress), for: .touchUpInside)
 
         view.addSubview(startButton)
@@ -92,6 +115,7 @@ class ViewController: UIViewController {
     }
 
     func setupWebView() {
+        webView.restorationIdentifier = "webView"
         webView.allowsBackForwardNavigationGestures = true
         webView.uiDelegate = self
         webView.navigationDelegate = self
@@ -107,8 +131,8 @@ class ViewController: UIViewController {
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
 
-        webViewEstimatedProgress = webView.observe(\.estimatedProgress) { [self] newWebView, _ in
-            progressBar.setProgress(Float(newWebView.estimatedProgress), animated: true)
+        webViewEstimatedProgress = webView.observe(\.estimatedProgress) { [self] (updatedWebView, _) in
+            progressBar.setProgress(Float(updatedWebView.estimatedProgress), animated: true)
         }
     }
 
@@ -136,12 +160,7 @@ class ViewController: UIViewController {
             webView.goBack()
         } else {
             webView.isHidden = true
-
             fullWebViewIsVisible = false
-
-            startButton.isHidden = false
-            backButton.isEnabled = false
-            forwardButton.isEnabled = true
         }
     }
 
@@ -151,12 +170,7 @@ class ViewController: UIViewController {
               forwardButton != nil else { return }
         if webView.isHidden {
             webView.isHidden = false
-
             fullWebViewIsVisible = true
-
-            startButton.isHidden = true
-            backButton.isEnabled = true
-            forwardButton.isEnabled = webView.canGoForward
         } else if webView.canGoForward {
             webView.goForward()
         }
@@ -214,11 +228,7 @@ class ViewController: UIViewController {
                 }, completion: { [self] _ in
                     webView.isHidden = true
                     webView.transform = .identity
-
                     fullWebViewIsVisible = false
-
-                    backButton.isEnabled = false
-                    forwardButton.isEnabled = true
                 })
             } else {
                 // cancelled: reset webView to full screen position
@@ -226,10 +236,6 @@ class ViewController: UIViewController {
                     webView.transform = .identity
                 }, completion: { [self] _ in
                     fullWebViewIsVisible = true
-
-                    startButton.isHidden = true
-                    backButton.isEnabled = true
-                    forwardButton.isEnabled = webView.canGoForward
                 })
             }
         default:
@@ -258,10 +264,6 @@ class ViewController: UIViewController {
                     webView.transform = .identity
                 }, completion: { [self] _ in
                     fullWebViewIsVisible = true
-
-                    startButton.isHidden = true
-                    backButton.isEnabled = true
-                    forwardButton.isEnabled = webView.canGoForward
                 })
             } else {
                 // cancelled: pop webView out of screen
@@ -270,11 +272,7 @@ class ViewController: UIViewController {
                 }, completion: { [self] _ in
                     webView.isHidden = true
                     webView.transform = .identity
-
                     fullWebViewIsVisible = false
-
-                    backButton.isEnabled = false
-                    forwardButton.isEnabled = true
                 })
             }
         default:
@@ -303,7 +301,6 @@ extension ViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         logger.info("did finish loading \(webView.title!)")
 
-        backButton.isEnabled = webView.canGoBack || fullWebViewIsVisible
         forwardButton.isEnabled = webView.canGoForward || !fullWebViewIsVisible
 
         UIView.animate(withDuration: 0.2, delay: 0.2, animations: { [self] in
@@ -317,5 +314,79 @@ extension ViewController: WKNavigationDelegate {
 
 // MARK: UIGestureRecognizerDelegate
 extension ViewController: UIGestureRecognizerDelegate {
+
+}
+
+// MARK: UIStateRestoring
+extension ViewController {
+
+    static let restoreWebViewInteractionStateKey = "webViewInteractionState"
+    static let restoreFullWebViewVisibleStateKey = "fullWebViewVisibleState"
+
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+
+        coder.encode(webView.interactionState, forKey: ViewController.restoreWebViewInteractionStateKey)
+        coder.encode(fullWebViewIsVisible, forKey: ViewController.restoreFullWebViewVisibleStateKey)
+    }
+
+    override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
+
+        restoredWebViewInteractionState = coder.decodeObject(forKey: ViewController.restoreWebViewInteractionStateKey)
+        restoredFullWebViewVisibleState = coder.decodeBool(forKey: ViewController.restoreFullWebViewVisibleStateKey)
+    }
+
+    func restore(from activity: NSUserActivity) {
+        guard activity.activityType == SceneDelegate.MainSceneActivityType(),
+              let userInfo = activity.userInfo else { return }
+
+        if let webViewInteractionState = userInfo[SceneDelegate.webViewInteractionStateKey] {
+            restoredWebViewInteractionState = webViewInteractionState
+        }
+        if let fullWebViewVisibleState = userInfo[SceneDelegate.fullWebViewVisibleStateKey] as? Bool {
+            restoredFullWebViewVisibleState = fullWebViewVisibleState
+        }
+    }
+
+    override func updateUserActivityState(_ activity: NSUserActivity) {
+        super.updateUserActivityState(activity)
+
+        let entries = [
+            SceneDelegate.webViewInteractionStateKey: webView.interactionState,
+            SceneDelegate.fullWebViewVisibleStateKey: fullWebViewIsVisible
+        ]
+        activity.addUserInfoEntries(from: entries as [AnyHashable: Any])
+    }
+
+    func updateUserActivity() {
+        let currentUserActivity = view.window?.windowScene?.userActivity ??
+            NSUserActivity(activityType: SceneDelegate.MainSceneActivityType())
+
+        let entries = [
+            SceneDelegate.webViewInteractionStateKey: webView.interactionState,
+            SceneDelegate.fullWebViewVisibleStateKey: fullWebViewIsVisible
+        ]
+        currentUserActivity.addUserInfoEntries(from: entries as [AnyHashable: Any])
+
+        view.window?.windowScene?.userActivity = currentUserActivity
+    }
+
+}
+
+// MARK: UIViewControllerRestoration
+extension ViewController: UIViewControllerRestoration {
+
+    static func viewController(withRestorationIdentifierPath identifierComponents: [String],
+                               coder: NSCoder) -> UIViewController? {
+        let viewController = ViewController(nibName: nil, bundle: nil)
+
+        if let restoredWebViewInteractionState =
+            coder.decodeObject(forKey: ViewController.restoreWebViewInteractionStateKey) {
+            viewController.webView.interactionState = restoredWebViewInteractionState
+        }
+        viewController.fullWebViewIsVisible = coder.decodeBool(forKey: ViewController.restoreFullWebViewVisibleStateKey)
+        return viewController
+    }
 
 }
